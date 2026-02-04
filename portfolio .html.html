@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>sssv | Portfolio</title>
+<style>
+.shine-text {
+  font-size: 40px;
+  color: white;
+  text-align: center;
+  text-shadow: 
+    0 0 2px #00ffff,
+    0 0 5px #00ffff,
+    0 0 10px #00ffff,
+    0 0 20px #00ffff;
+}
+body {
+  background-color: black;
+}
+</style>
+
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: #f8f9fb;
+            color: #333;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 80px 10%;
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            color: white;
+            flex-wrap: wrap;
+
+        }
+
+        .hero-text h1 {
+            font-size: 48px;
+        }
+
+        .hero-text span {
+            color: #ffd700;
+        }
+
+        .hero-text h2 {
+            margin-top: 10px;
+            font-weight: 400;
+        }
+
+        .hero-text p {
+            margin-top: 15px;
+            max-width: 500px;
+        }
+
+        .hero-buttons a {
+            display: inline-block;
+            margin: 20px 10px 0 0;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            background: white;
+            color: #0d6efd;
+            font-weight: bold;
+        }
+
+        .hero-buttons .outline {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+
+        .hero-image img {
+            width: 260px;
+            border-radius: 50%;
+            border: 5px solid white;
+        }
+
+        /* COMMON SECTION */
+        section {
+            padding: 60px 10%;
+        }
+
+        section h2 {
+            text-align: center;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        /* ABOUT */
+        .about p {
+            text-align: center;
+            max-width: 800px;
+            margin: auto;
+            font-size: 18px;
+        }
+
+        /* SKILLS */
+        .skill-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .skill-grid span {
+            background: white;
+            padding: 12px 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* PROJECTS */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .project-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .project-card ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .project-card li {
+            margin-bottom: 6px;
+        }
+
+        .tech {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+
+        /* CONTACT */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .social-links a {
+            padding: 12px 20px;
+            background: #0d6efd;
+            color: white;
+            border-radius: 25px;
+            text-decoration: none;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #111;
+            color: white;
+        }
+
+        /* RESPONSIVE */
+        @media(max-width: 900px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-image {
+                margin-top: 30px;
+            }
+        }
+    </style>
+
+</head>
+<body>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-text">
+      
+            <h1 class= shine-text >Hello, I'm <span>Shreyash Girade</span></h1>
+            <h2>BTech Computer Science Engineering Student From<br>
+             Symbiosis Institute of Technology, Nagpur</h2>
+            <p>Passionate about coding, app development, and building real-world projects.</p>
+
+            <div class="hero-buttons">
+                <a href="#projects">View Projects</a>
+                <a href="#contact" class="outline">Contact Me</a>
+            </div>
+        </div>
+
+        <div class="hero-image">
+            <img src="C:\Users\Shrav\Downloads\WhatsApp Image 2026-01-04 at 2.13.56 PM.jpeg" alt="My Photo">
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about">
+        <h2>About Me</h2>
+        <p>
+            
+            I am a BTech Computer Science Engineering student with a strong interest in
+            software development, mobile applications, and emerging technologies.
+            I enjoy learning by building practical projects and improving my skills. And I have also intrest in sports area in football.
+        </p>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="skills">
+        <h2>My Skills</h2>
+        <div class="skill-grid">
+            <span>C Programming</span>
+            <span>HTML & CSS</span>
+            <span>JavaScript (Basic)</span>
+            <span>Problem Solving</span>
+                   </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="projects" id="projects">
+        <h2>Projects</h2>
+
+        <div class="project-grid">
+
+            <div class="project-card">
+                <h3>Excel File Management App</h3>
+                <p>Mobile app to open, edit, save and share Excel files.</p>
+                <ul>
+                    <li>Edit Excel files</li>
+                    <li>Export to PDF</li>
+                    <li>Share via Email & WhatsApp</li>
+                    <li>Cloud integration (planned)</li>
+                </ul>
+                <p class="tech">Tech:, Excel Libraries</p>
+            </div>
+
+            <div class="project-card">
+                <h3>Stock & Crypto Tracking App [Running]</h3>
+                <p>Combined app for tracking stock market and cryptocurrency prices.</p>
+                <ul>
+                    <li>Live price tracking</li>
+                    <li>Crypto wallet integration</li>
+                    <li>QR code transfers</li>
+                </ul>
+                <p class="tech">Tech: Flutter, REST APIs</p>
+            </div>
+
+            <div class="project-card">
+                <h3>Personal Portfolio Website</h3>
+                <p>Creative portfolio website to showcase skills and projects.</p>
+                <ul>
+                    <li>Modern UI</li>
+                    <li>Responsive design</li>
+                    <li>Social links</li>
+                </ul>
+                <p class="tech">Tech: HTML, CSS</p>
+            </div>
+            <div class="project-card">
+            <h3>Arduino uno r3 projects</h3>
+             <p>In 1st semester in Tinker lab we have learn various Aurdino projects how system works.</p>
+             <ul>
+                     <li>single light</li>
+                    <li>traffic light </li>
+                    <li>temprature sensor</li>
+                    <li>push button </li>
+                    <li>potentiometer </li>
+                </ul>
+                 <p class="tech">Tech: C++</p>
+                  </div>
+           <div class="project-card">
+                <h3>Gaming website</h3>
+                <p>create gaming website for CA1 Projects.</p>
+                <ul>
+                    <li>Battle Royals game</li>
+                    <li>learder board</li>
+                    <li>Tournament</li>
+                </ul>
+                <p class="tech">Tech: HTML</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact" id="contact">
+        <h2>Connect With Me</h2>
+        <div class="social-links">
+            <a href="https://github.com/shreyash33332/html.git" target="_blank">GitHub</a>
+            <a href="https://www.linkedin.com/in/shreyash-girde-a84894376/" target="_blank">LinkedIn</a>
+             <a href="mailto:shreyash.girde.batch2025@sitnagpur.siu.edu.in">Email</a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2026 shreyash girade | moblie number: 7887479398</p>
+    </footer>
+
+</body>
+</html>
