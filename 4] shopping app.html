@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AARAMBH</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@300;400;500&display=swap');
+
+:root{
+    --bg:#030712;
+    --card:rgba(255,255,255,0.06);
+    --text:#e5e7eb;
+    --muted:#9ca3af;
+    --accent:#4f46e5;
+    --price:#facc15;
+}
+
+.light{
+    --bg:#f5f5f7;
+    --card:#ffffff;
+    --text:#111827;
+    --muted:#6b7280;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    transition:.3s;
+}
+
+/* HEADER */
+header{
+    padding:60px 70px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+header h1{
+    font-family:'Playfair Display',serif;
+    font-size:44px;
+}
+
+header p{
+    margin-top:8px;
+    color:var(--muted);
+    max-width:420px;
+}
+
+.controls{
+    display:flex;
+    gap:15px;
+    align-items:center;
+}
+
+button{
+    cursor:pointer;
+    border:none;
+}
+
+.toggle{
+    padding:8px 16px;
+    border-radius:20px;
+    background:var(--card);
+    color:var(--text);
+}
+
+.cart-btn{
+    position:relative;
+    font-size:22px;
+}
+
+.cart-btn span{
+    position:absolute;
+    top:-6px;
+    right:-10px;
+    background:var(--accent);
+    color:white;
+    font-size:11px;
+    padding:2px 6px;
+    border-radius:50%;
+}
+
+/* SECTION */
+.section{
+    padding:50px 70px;
+}
+
+.section-title{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:30px;
+}
+
+.section-title span{
+    color:var(--muted);
+}
+
+/* GRID */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:30px;
+}
+
+/* CARD */
+.card{
+    background:var(--card);
+    border-radius:20px;
+    padding:16px;
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 30px 50px rgba(0,0,0,.4);
+}
+
+.card img{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+    border-radius:14px;
+}
+
+.info{
+    margin-top:14px;
+}
+
+.info h3{
+    font-size:16px;
+}
+
+.info p{
+    font-size:13px;
+    color:var(--muted);
+    margin:6px 0 12px;
+}
+
+.price-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.price{
+    font-weight:600;
+    color:var(--price);
+}
+
+.add{
+    background:var(--accent);
+    color:white;
+    padding:8px 16px;
+    border-radius:20px;
+}
+
+/* CART */
+.cart-panel{
+    position:fixed;
+    top:0;
+    right:-360px;
+    width:340px;
+    height:100%;
+    background:var(--bg);
+    padding:25px;
+    border-left:1px solid rgba(255,255,255,.1);
+    transition:.4s;
+    z-index:1000;
+}
+
+.cart-panel.active{
+    right:0;
+}
+
+.cart-panel h2{
+    margin-bottom:20px;
+}
+
+.cart-item{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:12px;
+    font-size:14px;
+}
+
+.cart-item button{
+    background:none;
+    color:#ef4444;
+}
+
+.total{
+    margin-top:20px;
+    font-weight:600;
+}
+
+/* FOOTER */
+footer{
+    text-align:center;
+    padding:40px;
+    color:var(--muted);
+    font-size:13px;
+}
+
+/* MOBILE */
+@media(max-width:768px){
+    header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:20px;
+    }
+    .section{
+        padding:40px 25px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div>
+        <h1>AARAMBH</h1>
+        <p>Thoughtfully designed essentials for modern living.</p>
+    </div>
+    <div class="controls">
+        <button class="toggle" onclick="toggleTheme()">Theme</button>
+        <div class="cart-btn" onclick="toggleCart()">🛒 <span id="count">0</span></div>
+    </div>
+</header>
+
+<section class="section">
+<div class="section-title">
+    <h2>Products</h2>
+    <span>Minimal • Functional • Modern</span>
+</div>
+
+<div class="grid" id="products"></div>
+</section>
+
+<footer>
+© 2026 AARAMBH — Designed with intention
+</footer>
+
+<div class="cart-panel" id="cart">
+    <h2>Your Cart</h2>
+    <div id="cartItems"></div>
+    <div class="total">Total: ₹<span id="total">0</span></div>
+</div>
+
+<script>
+const products=[
+ {name:"Wireless Headphones",price:1999,img:"https://images.pexels.com/photos/577769/pexels-photo-577769.jpeg"},
+ {name:"Smart Watch",price:3299,img:"https://images.pexels.com/photos/267394/pexels-photo-267394.jpeg"},
+ {name:"Bluetooth Speaker",price:1499,img:"https://i0.wp.com/www.smartprix.com/bytes/wp-content/uploads/2023/08/cover-photoutils.com-3.jpg"},
+ {name:"Wireless Charger",price:1399,img:"https://m.media-amazon.com/images/I/61woZvYeQbL.jpg"},
+ {name:"Running Shoes",price:2499,img:"https://m.media-amazon.com/images/I/71f3BmjCwtL.jpg"},
+ {name:"Backpack",price:1899,img:"https://icon.in/cdn/shop/files/1_427a8665-919f-4581-8b61-313c46cae7e7.jpg"},
+ {name:"Classic Hoodie",price:1999,img:"https://images.pexels.com/photos/6311387/pexels-photo-6311387.jpeg"},
+ {name:"Leather Wallet",price:999,img:"https://teakwoodleathers.com/cdn/shop/files/T_WLT_533_BR_1_1080x.jpg"},
+ {name:"Sunglasses",price:9999,img:"https://cdn-images.farfetch-contents.com/28/02/01/54/28020154_57525844_600.jpg"}
+];
+
+let cart=[];
+
+const productBox=document.getElementById("products");
+
+products.forEach((p,i)=>{
+productBox.innerHTML+=`
+<div class="card">
+<img src="${p.img}">
+<div class="info">
+<h3>${p.name}</h3>
+<p>Premium quality product</p>
+<div class="price-row">
+<div class="price">₹${p.price}</div>
+<button class="add" onclick="addToCart(${i})">Add</button>
+</div>
+</div>
+</div>`;
+});
+
+function addToCart(i){
+cart.push(products[i]);
+updateCart();
+}
+
+function removeItem(i){
+cart.splice(i,1);
+updateCart();
+}
+
+function updateCart(){
+document.getElementById("count").innerText=cart.length;
+let items="",total=0;
+cart.forEach((c,i)=>{
+total+=c.price;
+items+=`<div class="cart-item">${c.name} ₹${c.price}
+<button onclick="removeItem(${i})">✕</button></div>`;
+});
+document.getElementById("cartItems").innerHTML=items;
+document.getElementById("total").innerText=total;
+}
+
+function toggleCart(){
+document.getElementById("cart").classList.toggle("active");
+}
+
+function toggleTheme(){
+document.body.classList.toggle("light");
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TravelTube - Travel Blog</title>
+
+<style>
+
+/* GLOBAL BACKGROUND */
+body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    color:white;
+}
+
+/* Background Image Layer */
+.background{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-image:url("https://images.unsplash.com/photo-1469474968028-56623f02e42e");
+    background-size:cover;
+    background-position:center;
+    z-index:-2;
+}
+
+/* Dark overlay */
+.overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.6);
+    z-index:-1;
+}
+
+/* Header */
+.header{
+    background:rgba(255,0,0,0.8);
+    padding:15px;
+    backdrop-filter: blur(5px);
+}
+
+.logo{
+    font-size:24px;
+    font-weight:bold;
+}
+
+/* Sidebar */
+.sidebar{
+    width:200px;
+    height:100vh;
+    position:fixed;
+    background:rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    padding:10px;
+}
+
+.sidebar a{
+    display:block;
+    padding:10px;
+    text-decoration:none;
+    color:white;
+}
+
+.sidebar a:hover{
+    background:rgba(255,255,255,0.2);
+}
+
+/* Main */
+.main{
+    margin-left:220px;
+    padding:20px;
+}
+
+/* Upload Box */
+.upload-box{
+    background:rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+/* Player */
+.player{
+    background:rgba(0,0,0,0.5);
+    padding:10px;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+#videoPlayer{
+    width:100%;
+    max-height:400px;
+}
+
+/* Video Grid */
+.video-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:20px;
+}
+
+.video-card{
+    background:rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    padding:10px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.video-card:hover{
+    transform:scale(1.05);
+}
+
+.video-card video{
+    width:100%;
+    height:150px;
+    object-fit:cover;
+    border-radius:5px;
+}
+
+.video-title{
+    margin-top:5px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- Background -->
+<div class="background"></div>
+<div class="overlay"></div>
+
+<!-- Header -->
+<div class="header">
+<div class="logo">TravelTube</div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar">
+<a href="#">Home</a>
+<a href="#">My Travel</a>
+<a href="#">India</a>
+<a href="#">International</a>
+<a href="#">Mountains</a>
+<a href="#">Beaches</a>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+<div class="upload-box">
+<h3>Upload Travel Video</h3>
+<input type="file" id="uploadVideo" accept="video/*">
+</div>
+
+<div class="player">
+<video id="videoPlayer" controls></video>
+</div>
+
+<div class="video-grid" id="videoList"></div>
+
+</div>
+
+<script>
+
+const upload = document.getElementById("uploadVideo");
+const player = document.getElementById("videoPlayer");
+const list = document.getElementById("videoList");
+
+upload.addEventListener("change", function()
+{
+    const file = this.files[0];
+
+    if(file)
+    {
+        const url = URL.createObjectURL(file);
+
+        player.src = url;
+        player.play();
+
+        const card = document.createElement("div");
+        card.className = "video-card";
+
+        const vid = document.createElement("video");
+        vid.src = url;
+
+        const title = document.createElement("div");
+        title.className = "video-title";
+        title.innerText = file.name;
+
+        card.appendChild(vid);
+        card.appendChild(title);
+
+        card.onclick = function()
+        {
+            player.src = url;
+            player.play();
+        };
+
+        list.appendChild(card);
+    }
+});
+
+</script>
+
+</body>
+</html>
