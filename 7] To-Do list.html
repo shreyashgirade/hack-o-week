@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Task Reminder</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+font-family:Segoe UI;
+}
+
+body{
+
+margin:0;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:flex-start;
+padding-top:40px;
+color:white;
+
+background: linear-gradient(
+270deg,
+#0f172a,
+#1e3a8a,
+#7e22ce,
+#ec4899
+);
+
+background-size:600% 600%;
+animation:gradientMove 12s ease infinite;
+
+}
+
+@keyframes gradientMove{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+.container{
+display:flex;
+gap:20px;
+}
+
+/* task board */
+
+.app{
+background:#1f2937;
+padding:20px;
+width:360px;
+border-radius:10px;
+}
+
+/* leaderboard */
+
+.leaderboard{
+background:#111827;
+padding:20px;
+width:220px;
+border-radius:10px;
+height:420px;
+overflow-y:auto;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+}
+
+input{
+padding:8px;
+border-radius:5px;
+border:none;
+margin-top:5px;
+width:95%;
+}
+
+button{
+padding:8px;
+border:none;
+background:#3b82f6;
+color:white;
+border-radius:5px;
+cursor:pointer;
+margin-top:5px;
+}
+
+/* task list */
+
+#taskList{
+list-style:none;
+padding:0;
+margin-top:15px;
+max-height:200px;
+overflow-y:auto;
+}
+
+#leaderboard{
+list-style:none;
+padding:0;
+margin-top:15px;
+}
+
+li{
+background:#374151;
+padding:10px;
+margin-bottom:8px;
+border-radius:6px;
+display:flex;
+justify-content:space-between;
+}
+
+.delete{
+color:red;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="app">
+
+<div class="header">
+<h3>Tasks</h3>
+<div id="clock"></div>
+</div>
+
+<input id="taskInput" placeholder="Enter task">
+
+<label>Date</label>
+<input type="date" id="taskDate">
+
+<label>Time</label>
+<input type="time" id="taskTime">
+
+<button onclick="addTask()">Add Task</button>
+
+<ul id="taskList"></ul>
+
+</div>
+
+<div class="leaderboard">
+
+<h3>Leaderboard</h3>
+
+<ul id="leaderboard"></ul>
+
+</div>
+
+</div>
+
+<script>
+
+/* request notification permission */
+
+if (Notification.permission !== "granted") {
+Notification.requestPermission();
+}
+
+/* live clock */
+
+setInterval(()=>{
+document.getElementById("clock").innerText =
+new Date().toLocaleTimeString();
+checkNotifications();
+},1000);
+
+/* tasks */
+
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+function save(){
+localStorage.setItem("tasks",JSON.stringify(tasks));
+}
+
+function render(){
+
+let list=document.getElementById("taskList");
+let board=document.getElementById("leaderboard");
+
+list.innerHTML="";
+board.innerHTML="";
+
+tasks.forEach((t,i)=>{
+
+let li=document.createElement("li");
+
+li.innerHTML=`
+<span>
+<strong>${t.text}</strong>
+<br>
+<small>${t.date} | ${t.time}</small>
+</span>
+<span class="delete" onclick="removeTask(${i})">✖</span>
+`;
+
+list.appendChild(li);
+
+/* leaderboard */
+
+let rank=document.createElement("li");
+rank.textContent="#"+(i+1)+" "+t.text;
+board.appendChild(rank);
+
+});
+
+save();
+}
+
+function addTask(){
+
+let text=document.getElementById("taskInput").value;
+let date=document.getElementById("taskDate").value;
+let time=document.getElementById("taskTime").value;
+
+if(text==="") return;
+
+tasks.push({
+text:text,
+date:date,
+time:time,
+notified:false
+});
+
+document.getElementById("taskInput").value="";
+render();
+}
+
+function removeTask(i){
+tasks.splice(i,1);
+render();
+}
+
+/* notification check */
+
+function checkNotifications(){
+
+let now = new Date();
+
+tasks.forEach(task=>{
+
+let taskTime = new Date(task.date + "T" + task.time);
+
+if(!task.notified && now >= taskTime){
+
+new Notification("Task Reminder",{
+body: task.text
+});
+
+task.notified = true;
+
+}
+
+});
+
+save();
+
+}
+
+render();
+
+</script>
+
+</body>
+</html>
