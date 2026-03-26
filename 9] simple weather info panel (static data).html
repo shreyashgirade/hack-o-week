@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ultra Weather Final</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:'Space Grotesk',sans-serif;
+  background:#05060f;
+  color:#fff;
+  overflow-x:hidden;
+  transition:.5s;
+}
+
+/* DAY MODE */
+body.day{
+  background:linear-gradient(135deg,#87CEEB,#f0f8ff);
+  color:#111;
+}
+
+/* SUN */
+body.day::after{
+  content:"";
+  position:fixed;
+  top:80px;right:80px;
+  width:120px;height:120px;
+  background:radial-gradient(circle,#ffd700,transparent);
+  border-radius:50%;
+  filter:blur(20px);
+  animation:pulse 4s infinite alternate;
+}
+@keyframes pulse{to{transform:scale(1.2)}}
+
+/* HEADER */
+.header{
+  display:flex;justify-content:space-between;padding:15px;
+}
+
+/* BUTTON */
+button{
+  background:rgba(255,255,255,.1);
+  border:none;color:#fff;padding:6px 12px;
+  border-radius:6px;cursor:pointer;
+  transition:.2s;
+}
+
+/* MAGNETIC */
+button:hover{background:rgba(255,255,255,.2)}
+
+/* TABS */
+.tabs{display:flex;gap:10px;padding:10px}
+.tab{
+  flex:1;background:rgba(255,255,255,.1);
+  padding:10px;border-radius:10px;text-align:center;
+  cursor:pointer;
+}
+.tab:hover{background:rgba(255,255,255,.2)}
+
+/* LAYOUT */
+.layout{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;padding:10px;
+}
+@media(max-width:700px){
+  .layout{grid-template-columns:1fr}
+}
+
+/* CARD */
+.card{
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(12px);
+  border-radius:15px;
+  padding:15px;
+  border:1px solid rgba(255,255,255,.15);
+  box-shadow:0 0 10px rgba(0,212,255,.15);
+  transition:.3s;
+}
+.card:hover{
+  transform:translateY(-5px) scale(1.02);
+  box-shadow:0 0 20px rgba(0,212,255,.4);
+}
+
+/* HERO */
+.temp{font-size:50px}
+.desc{opacity:.7}
+
+/* MAP */
+#map{height:300px;border-radius:15px}
+
+/* GRAPH */
+canvas{
+  background:rgba(255,255,255,.05);
+  border-radius:10px;
+  margin:10px;
+}
+
+/* HOURLY */
+.hourly{
+  display:flex;
+  overflow-x:auto;
+  gap:10px;
+  padding:10px;
+}
+.hour{
+  min-width:60px;
+  background:rgba(255,255,255,.1);
+  padding:8px;border-radius:10px;text-align:center;
+}
+
+/* CURSOR GLOW */
+body::before{
+  content:"";
+  position:fixed;
+  width:200px;height:200px;
+  background:radial-gradient(circle,rgba(255,255,255,.08),transparent);
+  pointer-events:none;
+  transform:translate(-50%,-50%);
+  top:var(--y,50%);
+  left:var(--x,50%);
+}
+
+/* WEATHER FX */
+#weatherFX{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-1;
+}
+
+/* FLOAT ICONS */
+#float-icons{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+}
+.ficon{
+  position:absolute;
+  opacity:.15;
+  animation:floatUp linear infinite;
+}
+@keyframes floatUp{
+  from{transform:translateY(100vh)}
+  to{transform:translateY(-10vh)}
+}
+
+/* TRANSITION */
+body.switching{
+  filter:blur(6px);
+  transform:scale(.98);
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="weatherFX"></canvas>
+<div id="float-icons"></div>
+
+<div class="header">
+  <h3>🌦 Ultra Weather</h3>
+  <div>
+    <button onclick="setUnit('C')">°C</button>
+    <button onclick="setUnit('F')">°F</button>
+  </div>
+</div>
+
+<div class="tabs" id="tabs"></div>
+
+<div class="layout">
+  <div id="map"></div>
+  <div class="card" id="hero"></div>
+</div>
+
+<canvas id="chart" height="120"></canvas>
+<div class="hourly" id="hourly"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+// DATA
+const cities=[
+  {name:"Nagpur",lat:21.14,lng:79.08,temp:36,desc:"Sunny",hourly:[36,35,34,33,32,31]},
+  {name:"Mumbai",lat:19.07,lng:72.87,temp:32,desc:"Rainy",hourly:[32,31,30,29,28,27]},
+  {name:"Delhi",lat:28.70,lng:77.10,temp:30,desc:"Windy",hourly:[30,29,28,27,26,25]}
+];
+
+let active=0,unit="C",map;
+
+// TEMP
+const toF=c=>Math.round(c*9/5+32);
+const t=v=>unit==="C"?v:toF(v);
+
+// RENDER
+function renderTabs(){
+  tabs.innerHTML=cities.map((c,i)=>`
+    <div class="tab" onclick="setCity(${i})">
+      ${c.name}<br>${t(c.temp)}°
+    </div>`).join("");
+}
+
+function renderHero(){
+  const c=cities[active];
+  hero.innerHTML=`<div class="temp">${t(c.temp)}°</div>
+  <div class="desc">${c.desc}</div>`;
+}
+
+function renderHourly(){
+  const c=cities[active];
+  hourly.innerHTML=c.hourly.map((h,i)=>`
+    <div class="hour">${i+1}h<br>${t(h)}°</div>`).join("");
+}
+
+// GRAPH
+function drawChart(){
+  const ctx=document.getElementById("chart").getContext("2d");
+  ctx.clearRect(0,0,300,120);
+  const data=cities[active].hourly.map(t);
+
+  ctx.beginPath();
+  ctx.strokeStyle="#00d4ff";
+  ctx.lineWidth=2;
+
+  data.forEach((v,i)=>{
+    const x=i*60+20;
+    const y=100-v;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  data.forEach((v,i)=>{
+    ctx.beginPath();
+    ctx.arc(i*60+20,100-v,4,0,Math.PI*2);
+    ctx.fillStyle="#00d4ff";
+    ctx.fill();
+  });
+}
+
+// MAP
+function initMap(){
+  map=L.map('map').setView([22,78],4);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+  cities.forEach((c,i)=>{
+    L.marker([c.lat,c.lng]).addTo(map).on("click",()=>setCity(i));
+  });
+}
+
+// CITY SWITCH
+function setCity(i){
+  document.body.classList.add("switching");
+
+  setTimeout(()=>{
+    active=i;
+    renderAll();
+    createParticles(cities[i].desc);
+    createFloatingIcons();
+    map.flyTo([cities[i].lat,cities[i].lng],6);
+
+    document.body.classList.remove("switching");
+  },300);
+}
+
+// UNIT
+function setUnit(u){unit=u;renderAll()}
+
+// DAY/NIGHT
+function setMode(){
+  const h=new Date().getHours();
+  document.body.classList.toggle("day",h>6 && h<18);
+}
+
+// PARTICLES
+const fxCanvas=document.getElementById("weatherFX");
+const fx=fxCanvas.getContext("2d");
+let particles=[];
+
+function resizeFX(){
+  fxCanvas.width=innerWidth;
+  fxCanvas.height=innerHeight;
+}
+resizeFX();
+window.onresize=resizeFX;
+
+function createParticles(type){
+  particles=[];
+  for(let i=0;i<80;i++){
+    particles.push({
+      x:Math.random()*fxCanvas.width,
+      y:Math.random()*fxCanvas.height,
+      speed:type.includes("Rain")?4:1,
+      len:type.includes("Rain")?15:5
+    });
+  }
+}
+
+function animateFX(){
+  fx.clearRect(0,0,fxCanvas.width,fxCanvas.height);
+  particles.forEach(p=>{
+    p.y+=p.speed;
+    if(p.y>fxCanvas.height){p.y=0}
+    fx.beginPath();
+    fx.moveTo(p.x,p.y);
+    fx.lineTo(p.x,p.y+p.len);
+    fx.strokeStyle="rgba(255,255,255,0.3)";
+    fx.stroke();
+  });
+  requestAnimationFrame(animateFX);
+}
+createParticles("wind");
+animateFX();
+
+// FLOAT ICONS
+const icons=["☀","☁","🌧","⛅","🌩"];
+function createFloatingIcons(){
+  const container=document.getElementById("float-icons");
+  container.innerHTML="";
+  for(let i=0;i<20;i++){
+    const el=document.createElement("div");
+    el.className="ficon";
+    el.textContent=icons[Math.floor(Math.random()*icons.length)];
+    el.style.left=Math.random()*100+"%";
+    el.style.animationDuration=(6+Math.random()*6)+"s";
+    container.appendChild(el);
+  }
+}
+createFloatingIcons();
+
+// INIT
+function renderAll(){
+  renderTabs();
+  renderHero();
+  renderHourly();
+  drawChart();
+}
+
+renderAll();
+initMap();
+setMode();
+
+// CURSOR
+document.addEventListener("mousemove",e=>{
+  document.body.style.setProperty("--x",e.clientX+"px");
+  document.body.style.setProperty("--y",e.clientY+"px");
+});
+
+// MAGNETIC BUTTON
+document.querySelectorAll("button").forEach(btn=>{
+  btn.addEventListener("mousemove",e=>{
+    const r=btn.getBoundingClientRect();
+    const x=e.clientX-r.left-r.width/2;
+    const y=e.clientY-r.top-r.height/2;
+    btn.style.transform=`translate(${x*0.2}px,${y*0.2}px)`;
+  });
+  btn.addEventListener("mouseleave",()=>btn.style.transform="translate(0,0)");
+});
+</script>
+
+</body>
+</html>
