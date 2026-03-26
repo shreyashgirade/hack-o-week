@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Library Catalogue</title>
+
+<style>
+body {
+    font-family: Arial;
+    margin: 0;
+    background: #f4f6f9;
+}
+
+/* Header */
+.header {
+    background: linear-gradient(270deg, #1e3c72, #2a5298, #6a11cb);
+    color: white;
+    text-align: center;
+    padding: 25px;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.navbar a {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Sections */
+.section { display: none; padding: 20px; }
+.active { display: block; }
+
+/* Controls */
+.controls input, .controls select {
+    padding: 8px;
+    margin: 5px;
+    border-radius: 20px;
+    border: none;
+}
+
+/* Books */
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+    gap: 20px;
+}
+
+.book {
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+    transition: 0.3s;
+}
+
+.book:hover { transform: scale(1.05); }
+
+.book img { width: 100%; border-radius: 10px; }
+
+/* ❤️ */
+.fav {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+/* Modal */
+#modal {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+}
+
+.modal-box {
+    background: white;
+    width: 300px;
+    margin: 10% auto;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 10px;
+    background: #2c3e50;
+    color: white;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<h1>📚 Library Catalogue</h1>
+
+<div class="navbar">
+<a onclick="showSection('home')">Home</a>
+<a onclick="showSection('category')">Categories</a>
+<a onclick="showSection('about')">About</a>
+</div>
+</div>
+
+<!-- HOME -->
+<div id="home" class="section active">
+
+<div class="controls">
+<input type="text" id="search" placeholder="Search books...">
+<select id="filter">
+<option value="all">All Genres</option>
+<option>Fiction</option>
+<option>Finance</option>
+<option>Self-help</option>
+<option>Fantasy</option>
+</select>
+</div>
+
+<div class="container" id="books">
+
+<!-- 10 BOOKS -->
+
+<div class="book" data-genre="Fiction"
+onclick="openBook('The Alchemist','Paulo Coelho','Fiction','★★★★★','Journey of dreams','https://covers.openlibrary.org/b/id/8221256-L.jpg')">
+<span class="fav" onclick="fav(event,this)">🤍</span>
+<img src="https://covers.openlibrary.org/b/id/8221256-L.jpg">
+<p>The Alchemist</p>
+</div>
+
+<div class="book" data-genre="Self-help"
+onclick="openBook('Atomic Habits','James Clear','Self-help','★★★★★','Build habits','https://covers.openlibrary.org/b/id/9259256-L.jpg')">
+<span class="fav" onclick="fav(event,this)">🤍</span>
+<img src="https://covers.openlibrary.org/b/id/9259256-L.jpg">
+<p>Atomic Habits</p>
+</div>
+
+<div class="book" data-genre="Finance"
+onclick="openBook('Rich Dad Poor Dad','Robert Kiyosaki','Finance','★★★★☆','Money mindset','https://covers.openlibrary.org/b/id/8231996-L.jpg')">
+<span class="fav" onclick="fav(event,this)">🤍</span>
+<img src="https://covers.openlibrary.org/b/id/8231996-L.jpg">
+<p>Rich Dad Poor Dad</p>
+</div>
+
+<div class="book" data-genre="Fantasy"
+onclick="openBook('Harry Potter','J.K. Rowling','Fantasy','★★★★★','Magic story','https://covers.openlibrary.org/b/id/7984916-L.jpg')">
+<span class="fav" onclick="fav(event,this)">🤍</span>
+<img src="https://covers.openlibrary.org/b/id/7984916-L.jpg">
+<p>Harry Potter</p>
+</div>
+
+<div class="book" data-genre="Finance"
+onclick="openBook('Psychology of Money','Morgan Housel','Finance','★★★★★','Money thinking','https://covers.openlibrary.org/b/id/10523338-L.jpg')">
+<span class="fav" onclick="fav(event,this)">🤍</span>
+<img src="https://covers.openlibrary.org/b/id/10523338-L.jpg">
+<p>Psychology of Money</p>
+</div>
+
+<div class="book" data-genre="Fiction"
+onclick="openBook('Ikigai','Hector Garcia','Fiction','★★★★☆','Life purpose','https://covers.openlibrary.org/b/id/8370226-L.jpg')">
+<span class="fav" onclick="fav(event,this)">🤍</span>
+<img src="https://covers.openlibrary.org/b/id/8370226-L.jpg">
+<p>Ikigai</p>
+</div>
+
+<div class="book" data-genre="Self-help"
+onclick="openBook('Think and Grow Rich','Napoleon Hill','Self-help','★★★★★','Success guide','https://covers.openlibrary.org/b/id/7222246-L.jpg')">
+<span class="fav" onclick="fav(event,this)">🤍</span>
+<img src="https://covers.openlibrary.org/b/id/7222246-L.jpg">
+<p>Think and Grow Rich</p>
+</div>
+
+<div class="book" data-genre="Fiction"
+onclick="openBook('Silent Patient','Alex Michaelides','Fiction','★★★★☆','Thriller','https://covers.openlibrary.org/b/id/9612498-L.jpg')">
+<span class="fav" onclick="fav(event,this)">🤍</span>
+<img src="https://covers.openlibrary.org/b/id/9612498-L.jpg">
+<p>Silent Patient</p>
+</div>
+
+<div class="book" data-genre="Fantasy"
+onclick="openBook('The Hobbit','J.R.R. Tolkien','Fantasy','★★★★★','Adventure','https://covers.openlibrary.org/b/id/6979861-L.jpg')">
+<span class="fav" onclick="fav(event,this)">🤍</span>
+<img src="https://covers.openlibrary.org/b/id/6979861-L.jpg">
+<p>The Hobbit</p>
+</div>
+
+<div class="book" data-genre="Self-help"
+onclick="openBook('Deep Work','Cal Newport','Self-help','★★★★☆','Focus','https://covers.openlibrary.org/b/id/8375046-L.jpg')">
+<span class="fav" onclick="fav(event,this)">🤍</span>
+<img src="https://covers.openlibrary.org/b/id/8375046-L.jpg">
+<p>Deep Work</p>
+</div>
+
+</div>
+</div>
+
+<!-- CATEGORY -->
+<div id="category" class="section">
+<h2>📂 Categories</h2>
+<ul>
+<li>Fiction</li>
+<li>Finance</li>
+<li>Self-help</li>
+<li>Fantasy</li>
+</ul>
+</div>
+
+<!-- ABOUT -->
+<div id="about" class="section">
+<h2>ℹ️ About Library</h2>
+<p><b>Library Name:</b> City Central Library</p>
+<p><b>Phone:</b> +91 9876543210</p>
+<p><b>Address:</b> FC Road, Pune, Maharashtra, India</p>
+</div>
+
+<!-- Modal -->
+<div id="modal">
+<div class="modal-box">
+<span onclick="closeModal()">❌</span>
+<img id="img" width="100%">
+<h3 id="title"></h3>
+<p id="author"></p>
+<p id="genre"></p>
+<p id="rating"></p>
+<p id="desc"></p>
+</div>
+</div>
+
+<footer>© 2026 Library System</footer>
+
+<script>
+// Navigation
+function showSection(id){
+document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+
+// Modal
+function openBook(t,a,g,r,d,i){
+document.getElementById("modal").style.display="block";
+document.getElementById("title").innerText=t;
+document.getElementById("author").innerText="Author: "+a;
+document.getElementById("genre").innerText="Genre: "+g;
+document.getElementById("rating").innerText="Rating: "+r;
+document.getElementById("desc").innerText=d;
+document.getElementById("img").src=i;
+}
+
+function closeModal(){
+document.getElementById("modal").style.display="none";
+}
+
+// Favorites
+function fav(e,el){
+e.stopPropagation();
+el.innerText = el.innerText=="🤍"?"❤️":"🤍";
+}
+
+// Search + Filter
+const search = document.getElementById("search");
+const filter = document.getElementById("filter");
+const books = document.querySelectorAll(".book");
+
+function filterBooks(){
+let text = search.value.toLowerCase();
+let genre = filter.value;
+
+books.forEach(b=>{
+let name = b.innerText.toLowerCase();
+let g = b.dataset.genre;
+
+b.style.display =
+(name.includes(text) && (genre=="all" || g==genre))
+? "block":"none";
+});
+}
+
+search.addEventListener("keyup", filterBooks);
+filter.addEventListener("change", filterBooks);
+</script>
+
+</body>
+</html>
